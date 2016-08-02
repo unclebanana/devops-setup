@@ -1,0 +1,63 @@
+postgresql:
+  restart: always
+  image: sameersbn/postgresql:9.4-14
+  environment:
+    - DB_USER=gitlab
+    - DB_PASS=password
+    - DB_NAME=gitlabhq_production
+  volumes:
+    - /srv/docker/gitlab/postgresql:/var/lib/postgresql
+gitlab:
+  restart: always
+  image: sameersbn/gitlab:8.5.4-1
+  links:
+    - redis:redisio
+    - postgresql:postgresql
+  ports:
+    - "10080:80"
+    - "10022:22"
+  environment:
+    - DEBUG=false
+    - TZ=Asia/Beijing
+    - GITLAB_TIMEZONE=Beijing
+
+    - GITLAB_SECRETS_DB_KEY_BASE="WrWJXqFThgWP4jwVqKvFTTTF97VpNVgbW4kCpL97HsgrWbfKkf9tsLKxH44XtHzp"
+
+    - GITLAB_HOST=gitlab.eco-iot.com
+    - GITLAB_PORT=10080
+    - GITLAB_SSH_PORT=10022
+    - GITLAB_RELATIVE_URL_ROOT=
+
+    - GITLAB_NOTIFY_ON_BROKEN_BUILDS=true
+    - GITLAB_NOTIFY_PUSHER=false
+
+    - GITLAB_EMAIL=j.huang@eco-iot.com
+    - GITLAB_EMAIL_REPLY_TO=j.huang@eco-iot.com
+    - GITLAB_INCOMING_EMAIL_ADDRESS=j.huang@eco-iot.com
+
+    - GITLAB_BACKUP_SCHEDULE=monthy
+    - GITLAB_BACKUP_TIME=13:00
+
+    - SMTP_ENABLED=true
+    - SMTP_DOMAIN=www.qq.com
+    - SMTP_HOST=smtp.qq.com
+    - SMTP_PORT=587
+    - SMTP_USER=564779540@qq.com
+    - SMTP_PASS=ighwgcjaopblbfdj
+    - SMTP_STARTTLS=true
+    - SMTP_AUTHENTICATION=login
+
+    - IMAP_ENABLED=false
+    - IMAP_HOST=imap.qq.com
+    - IMAP_PORT=993
+    - IMAP_USER=564779540@qq.com
+    - IMAP_PASS=ighwgcjaopblbfdj
+    - IMAP_SSL=true
+    - IMAP_STARTTLS=false
+  volumes:
+    - /srv/docker/gitlab/gitlab:/home/git/data
+redis:
+  restart: always
+  image: sameersbn/redis:latest
+  volumes:
+    - /srv/docker/gitlab/redis:/var/lib/redis

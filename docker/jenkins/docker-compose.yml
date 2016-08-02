@@ -1,0 +1,17 @@
+jenkins:
+  restart: always
+  image: jenkins-android:2.7.1
+  ports:
+    - "81:8080"
+    - "50000:50000"
+  environment:
+#    - TZ=Asia/Beijing
+    - ANDROID_HOME=/opt/android/sdk
+  volumes:
+    # Data folder
+    - /srv/docker/jenkins:/var/jenkins_home
+    # Sync time
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/timezone:/etc/timezone:ro
+    # Android sdk
+    - /home/developer/Android/Sdk:/opt/android/sdk:ro
